@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.Layout
 import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -25,6 +26,52 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saveButton : Button
     private lateinit var cancelButton : Button
     private lateinit var showAditionalButton : Button
+
+    private fun validateInput(): Boolean {
+        val name = findViewById<EditText>(R.id.name_edit_text)
+        val phone = findViewById<EditText>(R.id.phone_number_edit_text)
+        val email = findViewById<EditText>(R.id.email_edit_text)
+        val website = findViewById<EditText>(R.id.website_edit_text)
+
+        val nameValue = name.text.toString().trim()
+        val phoneValue = phone.text.toString().trim()
+        val emailValue = email.text.toString().trim()
+        val websiteValue = website.text.toString().trim()
+
+        name.error = null
+        phone.error = null
+        email.error = null
+        website.error = null
+
+        if (nameValue.isEmpty()) {
+            name.error = "Name is required"
+            name.requestFocus()
+            return false
+        }
+
+        if (phoneValue.isNotEmpty() &&
+            !Patterns.PHONE.matcher(phoneValue).matches()) {
+            phone.error = "Invalid phone number"
+            phone.requestFocus()
+            return false
+        }
+
+        if (emailValue.isNotEmpty() &&
+            !Patterns.EMAIL_ADDRESS.matcher(emailValue).matches()) {
+            email.error = "Invalid email address"
+            email.requestFocus()
+            return false
+        }
+
+        if (websiteValue.isNotEmpty() &&
+            !Patterns.WEB_URL.matcher(websiteValue).matches()) {
+            website.error = "Invalid website URL"
+            website.requestFocus()
+            return false
+        }
+
+        return true
+    }
 
     fun onSaveIntentTrigger() {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
@@ -97,7 +144,9 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.save_button -> {
-                    onSaveIntentTrigger()
+                    if (validateInput()) {
+                        onSaveIntentTrigger()
+                    }
                 }
             }
         }

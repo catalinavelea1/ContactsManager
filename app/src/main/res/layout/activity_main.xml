@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:inputType="phone"
             android:hint="Phone"
-            android:enabled="false"
             />
 
         <Space
